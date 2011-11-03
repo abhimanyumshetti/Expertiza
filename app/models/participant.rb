@@ -97,8 +97,8 @@ class Participant < ActiveRecord::Base
   #Other team members records will be updated automatically.
   def update_topic_id(topic_id)
     assignment = Assignment.find(self.parent_id)
-
-    #if assignment.team_assignment? chandan
+    #ACS Call the select method for all the teams(single or group)
+    #if assignment.team_assignment?    ACS
       team = Team.find_by_sql("SELECT u.team_id as team_id
                                   FROM teams as t,teams_users as u
                                   WHERE t.parent_id = " + assignment.id.to_s + " and t.id = u.team_id and u.user_id = " + self.user_id.to_s )
@@ -110,9 +110,11 @@ class Participant < ActiveRecord::Base
         participant = Participant.find_by_user_id_and_parent_id(team_member.user_id,assignment.id)
         participant.update_attribute(:topic_id, topic_id)
       }
+    #ACS++
     #else
     #  self.update_attribute(:topic_id, topic_id)
     #end
+    #ACS--
   end
   
 end

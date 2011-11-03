@@ -7,13 +7,15 @@ class StudentReviewController < ApplicationController
     
     # Find the current phase that the assignment is in.
     @review_phase = @assignment.get_current_stage(AssignmentParticipant.find(params[:id]).topic_id)
-    
-    #chandan if @assignment.team_assignment
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if @assignment.team_assignment
       @review_mappings = TeamReviewResponseMap.find_all_by_reviewer_id(@participant.id)
+    #ACS++
     #else
     #  @review_mappings = ParticipantReviewResponseMap.find_all_by_reviewer_id(@participant.id)
     #end
-    @metareview_mappings = MetareviewResponseMap.find_all_by_reviewer_id(@participant.id)  
+    #ACS--
+    @metareview_mappings = MetareviewResponseMap.find_all_by_reviewer_id(@participant.id)
 
     # Calculate the number of reviews that the user has completed so far.
     @num_reviews_total       = @review_mappings.size
@@ -37,11 +39,14 @@ class StudentReviewController < ApplicationController
 
     if @assignment.staggered_deadline?
       @review_mappings.each { |review_mapping|
-          #chandan if @assignment.team_assignment?
+          #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+          #if @assignment.team_assignment? ACS
             participant = AssignmentTeam.get_first_member(review_mapping.reviewee_id)
+          #ACS++
           #else
           #  participant = review_mapping.reviewee
           #end
+          #ACS--
 
           if !participant.nil? and !participant.topic_id.nil?
             review_due_date = TopicDeadline.find_by_topic_id_and_deadline_type_id(participant.topic_id,1)
@@ -66,11 +71,14 @@ class StudentReviewController < ApplicationController
         #
         review_mapping = ResponseMap.find_by_id(metareview_mapping.reviewed_object_id)
         if review_mapping
-          #chandan if @assignment.team_assignment?
+          #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+          #if @assignment.team_assignment?      ACS
             participant = AssignmentTeam.get_first_member(review_mapping.reviewee_id)
+          #ACS++
           #else
           #  participant = review_mapping.reviewee
           #end
+          #ACS--
         end
 
         if participant && participant.topic_id

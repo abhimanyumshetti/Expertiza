@@ -10,8 +10,8 @@
 <tr><ul>
   <%review_no = 1%>
   <%for review_map in @review_mappings %>
-  <!--% if @assignment.team_assignment chandan #check-->
-
+     <!--ACS Find the team id for the team-->
+     <!--% if @assignment.team_assignment ACS -->
      <%  author = AssignmentTeam.find(review_map.team_id)
      #else
      #  author = AssignmentParticipant.find_by_user_id_and_parent_id(review_map.author_id,@assignment.id)

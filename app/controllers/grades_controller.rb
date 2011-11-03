@@ -211,8 +211,9 @@ class GradesController < ApplicationController
     # For author feedback, participants need to be able to read feedback submitted by other teammates.
     # If response is anything but author feedback, only the person who wrote feedback should be able to see it.
     ## This following code was cloned from response_controller.
-    
-     if @participant.assignment.team_count > 1 #chandan @participant.assignment.team_assignment
+
+     #if @participant.assignment.team_assignment #ACS
+     if @participant.assignment.team_count > 1
       team = @participant.team
       unless team.has_user session[:user]
         redirect_to '/denied?reason=You are not on the team that wrote this feedback'

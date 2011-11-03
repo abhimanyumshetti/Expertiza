@@ -136,12 +136,10 @@ class ResponseController < ApplicationController
     get_content  
     #**********************
     # Check whether this is Jen's assgt. & if so, use her rubric
-    #chandan commenting this part of the code  remove when submitting
     #
 
     if (@assignment.instructor_id == User.find_by_name("jkidd").id) && @title == "Review"
-    #  puts "xxxxxxxxxxxxxxxxxxxxxxxx"
-      if @assignment.id < 469
+     if @assignment.id < 469
          @next_action = "custom_create"
          render :action => 'custom_response'
      else
@@ -151,7 +149,6 @@ class ResponseController < ApplicationController
     else
       # end of special code (except for the end below, to match the if above)
       #**********************
-    #puts "yyyyyyyyyyyyyyyyyyy"
     render :action => 'response'
     end
   end
@@ -244,7 +241,7 @@ class ResponseController < ApplicationController
   def redirect_when_disallowed(response)
     # For author feedback, participants need to be able to read feedback submitted by other teammates.
     # If response is anything but author feedback, only the person who wrote feedback should be able to see it.
-    if response.map.read_attribute(:type) == 'FeedbackResponseMap' && response.map.assignment.team_count > 1 #chandanresponse.map.assignment.team_assignment
+    if response.map.read_attribute(:type) == 'FeedbackResponseMap' && response.map.assignment.team_count > 1 # response.map.assignment.team_assignment ACS
       team = response.map.reviewer.team
       unless team.has_user session[:user]
         redirect_to '/denied?reason=You are not on the team that wrote this feedback'

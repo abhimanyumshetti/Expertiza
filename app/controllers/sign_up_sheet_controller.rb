@@ -77,7 +77,8 @@ class SignUpSheetController < ApplicationController
     @slots_waitlisted = SignUpTopic.find_slots_waitlisted(assignment_id)
 
     @assignment = Assignment.find(assignment_id)
-    #if !@assignment.team_assignment chandan
+    #ACS Remove the if condition only and treat all assignments as team assignments
+    #if !@assignment.team_assignment ACS
     #  @participants = SignedUpUser.find_participants(assignment_id)
     #else
       @participants = SignedUpUser.find_team_participants(assignment_id)
@@ -227,7 +228,8 @@ class SignUpSheetController < ApplicationController
     #Find whether the user has signed up for any topics; if so the user won't be able to
     #sign up again unless the former was a waitlisted topic
     #if team assignment, then team id needs to be passed as parameter else the user's id
-    #if assignment.team_assignment == true chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if assignment.team_assignment == true #ACS
       users_team = SignedUpUser.find_team_users(params[:id],(session[:user].id))
 
       if users_team.size == 0
@@ -236,9 +238,11 @@ class SignUpSheetController < ApplicationController
         #TODO: fix this; cant use 0
         @selected_topics = otherConfirmedTopicforUser(params[:id], users_team[0].t_id)
       end
+    #ACS++
     #else
     #  @selected_topics = otherConfirmedTopicforUser(params[:id], session[:user].id)
     #end
+    #ACS--
   end
 
   #this function is used to delete a previous signup
@@ -257,13 +261,16 @@ class SignUpSheetController < ApplicationController
       flash[:error] = "You cannot drop this topic because the drop deadline has passed."
     else
       #if team assignment find the creator id from teamusers table and teams
-      #if assignment.team_assignment == true chandan
+      #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+      #if assignment.team_assignment == true ACS
         #users_team will contain the team id of the team to which the user belongs
         users_team = SignedUpUser.find_team_users(assignment_id,(session[:user].id))
         signup_record = SignedUpUser.find_by_topic_id_and_creator_id(topic_id, users_team[0].t_id)
+      #ACS++
       #else
       #  signup_record = SignedUpUser.find_by_topic_id_and_creator_id(topic_id, session[:user].id)
       #end
+      #ACS--
 
       #if a confirmed slot is deleted then push the first waiting list member to confirmed slot if someone is on the waitlist
       if signup_record.is_waitlisted == false
@@ -277,12 +284,15 @@ class SignUpSheetController < ApplicationController
           first_waitlisted_user.save
   
           #update the participants details
-          #if assignment.team_assignment? chandan
+          #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+          #if assignment.team_assignment? ACS
             user_id = TeamsUser.find(:first, :conditions => {:team_id => first_waitlisted_user.creator_id}).user_id
             participant = Participant.find_by_user_id_and_parent_id(user_id,assignment.id)
+          #ACS++
           #else
           #  participant = Participant.find_by_user_id_and_parent_id(first_waitlisted_user.creator_id, assignment.id)
           #end
+          #ACS--
           participant.update_topic_id(topic_id)
   
           SignUpTopic.cancel_all_waitlists(first_waitlisted_user.creator_id,assignment_id)
@@ -303,7 +313,8 @@ class SignUpSheetController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
 
     #check whether team assignment. This is to decide whether a team_id or user_id should be the creator_id
-  #  if assignment.team_assignment == true chandan
+    #Always use team_id ACS
+    #if assignment.team_assignment == true ACS
 
       #check whether the user already has a team for this assignment
       users_team = SignedUpUser.find_team_users(params[:assignment_id],(session[:user].id))
@@ -317,9 +328,11 @@ class SignUpSheetController < ApplicationController
       else
         confirmationStatus = confirmTopic(users_team[0].t_id, params[:id], params[:assignment_id])
       end
+  #  ACS++
   #  else
   #    confirmationStatus = confirmTopic(session[:user].id, params[:id], params[:assignment_id])
   #  end
+  #  ACS--
     redirect_to :action => 'signup_topics', :id => params[:assignment_id]
   end
 

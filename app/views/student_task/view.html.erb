@@ -11,7 +11,9 @@ Next: Click the activity you wish to perform on the assignment titled: <%= @assi
 		(Sign up for a topic)
 		</li>
 	<%end%>
-	<!-- #chandan %if @assignment.team_assignment %-->
+    <!--ACS Here we need to know if it is a team assignment or individual assignment
+        to display the label "Your team" in the student assignment tasks-->
+	<!--%if @assignment.team_assignment % ACS-->
     <%if @assignment.team_count > 1 %>
 		<li> <%= link_to 'Your team', :controller=>'student_team', :action => 'view', :id => @participant.id %> 
 		(View and manage your team)

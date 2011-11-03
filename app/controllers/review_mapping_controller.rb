@@ -34,13 +34,14 @@ class ReviewMappingController < ApplicationController
           :user_id => user.id, 
           :contributor_id => params[:contributor_id]
       reviewer = get_reviewer(user,assignment,regurl)
-      
-      #if assignment.team_assignment chandan
+      #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+      #if assignment.team_assignment ACS
         if TeamReviewResponseMap.find(:first, :conditions => ['reviewee_id = ? and reviewer_id = ?',params[:id],reviewer.id]).nil?
           TeamReviewResponseMap.create(:reviewee_id => params[:contributor_id], :reviewer_id => reviewer.id, :reviewed_object_id => assignment.id)
         else
           raise "The reviewer, \""+reviewer.name+"\", is already assigned to this contributor."
         end
+      #ACS++
       #else
       #  if ParticipantReviewResponseMap.find(:first, :conditions => ['reviewee_id = ? and reviewer_id = ?',params[:id],reviewer.id]).nil?
       #     ParticipantReviewResponseMap.create(:reviewee_id => params[:contributor_id], :reviewer_id => reviewer.id, :reviewed_object_id => assignment.id)
@@ -48,6 +49,7 @@ class ReviewMappingController < ApplicationController
       #     raise "The reviewer, \""+reviewer.name+"\", is already assigned to this contributor."
       #  end
       #end
+      #ACS--
     rescue
        msg = $!
     end    
@@ -80,7 +82,8 @@ class ReviewMappingController < ApplicationController
       msg = String.new
   
       begin
-#        if assignment.team_assignment  chandan
+        #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+        #if assignment.team_assignment  ACS
           contributor = get_team_from_submission(submission)
           if TeamReviewResponseMap.find(:first, :conditions => ['reviewee_id = ? and reviewer_id = ?', contributor.id, reviewer.id]).nil?
             TeamReviewResponseMap.create(:reviewee_id => contributor.id,
@@ -89,6 +92,7 @@ class ReviewMappingController < ApplicationController
           else
             raise "The reviewer, \""+reviewer.name+"\", is already assigned to this contributor."
           end
+        #ACS++
 #        else
 #          contributor = AssignmentParticipant.find_by_id_and_parent_id(submission.id, assignment.id)
 #          if ParticipantReviewResponseMap.find(:first, :conditions => ['reviewee_id = ? and reviewer_id = ?',contributor.id ,reviewer.id]).nil?
@@ -100,6 +104,7 @@ class ReviewMappingController < ApplicationController
 #            raise "The reviewer, \""+reviewer.name+"\", is already assigned to this contributor."
 #          end
 #        end
+        #ACS--
       rescue
         msg = $!
       end
@@ -380,25 +385,31 @@ class ReviewMappingController < ApplicationController
     if params[:msg]
       flash[:error] = params[:msg]
     end
-    @assignment = Assignment.find(params[:id])       
-#    if @assignment.team_assignment chandan
+    @assignment = Assignment.find(params[:id])
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if @assignment.team_assignment ACS
       @items = AssignmentTeam.find_all_by_parent_id(@assignment.id) 
       @items.sort!{|a,b| a.name <=> b.name}
-#    else
-#      @items = AssignmentParticipant.find_all_by_parent_id(@assignment.id)
-#      @items.sort!{|a,b| a.fullname <=> b.fullname}
-#    end
+    #ACS++
+    #else
+    #  @items = AssignmentParticipant.find_all_by_parent_id(@assignment.id)
+    #  @items.sort!{|a,b| a.fullname <=> b.fullname}
+    #end
+    #ACS--
   end
   
   def list_sortable
     @assignment = Assignment.find(params[:id])
     @entries = Array.new 
     index = 0
-#    if @assignment.team_assignment chandan
-      contributors = AssignmentTeam.find_all_by_parent_id(@assignment.id)       
-#    else
-#      contributors = AssignmentParticipant.find_all_by_parent_id(@assignment.id)
-#    end
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if @assignment.team_assignment ACS
+      contributors = AssignmentTeam.find_all_by_parent_id(@assignment.id)
+    #ACS++
+    #else
+    #  contributors = AssignmentParticipant.find_all_by_parent_id(@assignment.id)
+    #end
+    #ACS--
     contributors.sort!{|a,b| a.name <=> b.name}    
     contributors.each{
       |contrib|
@@ -493,11 +504,14 @@ class ReviewMappingController < ApplicationController
   def review_report
     @id = params[:id]  #contains the assignment id
     @assignment = Assignment.find(params[:id])
-#    if @assignment.team_assignment chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if @assignment.team_assignment ACS
       @type = "TeamReviewResponseMap"
-#    else
-#      @type = "ParticipantReviewResponseMap"
-#    end
+    #ACS++
+    #else
+    #  @type = "ParticipantReviewResponseMap"
+    #end
+    #ACS--
     
     
     #find all reviewers for this assignment
@@ -517,12 +531,14 @@ class ReviewMappingController < ApplicationController
   def search
     @assignment = Assignment.find(params[:id])
     @id = params[:id]
-    
- #   if @assignment.team_assignment        chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if @assignment.team_assignment ACS
       @type = "TeamReviewResponseMap"
- #   else
- #     @type = "ParticipantReviewResponseMap"
- #   end
+    #ACS++
+    #else
+    #  @type = "ParticipantReviewResponseMap"
+    #end
+    #ACS--
     
     @us = User.find(:all, :select => "DISTINCT id", :conditions => ["fullname LIKE ?", '%'+params[:user][:fullname]+'%'])
     @participants = Participant.find(:all, :select => "DISTINCT id", :conditions => ["user_id IN (?) and parent_id = ?", @us, @assignment.id] )
@@ -544,11 +560,12 @@ class ReviewMappingController < ApplicationController
     review_questionnaire_id =get_review_questionnaire_id_for_assignment(@assignment) 
     @questions = Question.find(:all, :conditions =>["questionnaire_id = ?", review_questionnaire_id])
     @review_scores = Hash.new
-#    if (@assignment.team_assignment) chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if (@assignment.team_assignment) ACS
       @response_type = "TeamReviewResponseMap"
-#    else
-#      @response_type = "ParticipantReviewResponseMap"
-#    end
+    #else
+    #  @response_type = "ParticipantReviewResponseMap"
+    #end
     
     
     @myreviewers = ResponseMap.find(:all,:select => "DISTINCT reviewer_id", :conditions => ["reviewed_object_id = ? and type = ? ", @assignment.id, @type] )
@@ -595,13 +612,14 @@ class ReviewMappingController < ApplicationController
     @review_questions = @review_questionnaire.questions
     @scores = [0,0,0,0,0,0,0,0,0,0]
     t_score = 0
-#    if(@assignment.team_assignment)# IF TEAM aSS chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if(@assignment.team_assignment) #ACS
       @teams = Team.find_all_by_parent_id(params[:id])
       @objtype = "TeamReviewResponseMap"
-#    else
-#      @teams = Participant.find_all_by_parent_id(params[:id])
-#      @objtype = "ParticipantReviewResponseMap"
-#    end
+    #else
+    #  @teams = Participant.find_all_by_parent_id(params[:id])
+    #  @objtype = "ParticipantReviewResponseMap"
+    #end
     
     @teams.each do |team|
       #@qid = QuestionnaireType.find_by_name("Review").id

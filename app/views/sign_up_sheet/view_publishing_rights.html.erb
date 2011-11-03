@@ -8,9 +8,10 @@
   <table class="general">
     <tr>
       <th width="5%" rowspan="2">Topic #</th>
-      <!--chandan th width=<!--%= (@assignment.team_assignment ? "40" : "60") %> rowspan="2">Topic name(s)</th -->
+      <!-- ACS Since everything is a team(including 1 member teams) do not make any distinction
+      <!-- th width=<!--%= (@assignment.team_assignment ? "40" : "60") %> rowspan="2">Topic name(s)</th -->
       <th width="40" rowspan="2">Topic name(s)</th>
-	  <!-- chandan% if @assignment.team_assignment % -->
+	  <!-- % if @assignment.team_assignment % -->
       <th width="20%" rowspan="2">Team name</th>
 	  <!--% end %-->
       <th width="35%" colspan="4">Participant</th>
@@ -31,7 +32,8 @@
 
       <% if (@assignment.participants.size > 0)
            for signed_up_user in topic.signed_up_users
-             #chandan if @assignment.team_assignment
+             #ACS Find the user(s) signed up for a topic
+             # if @assignment.team_assignment ACS
                # An unknown bug causes teams to disappear. Don't crash if this happens
                team = Team.find_by_id(signed_up_user.creator_id)
                users = []
@@ -46,9 +48,8 @@
           <tr>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
-			<!--chandan if @assignment.team_assignment
-			     if !showed_team 
-            -->
+			<!-- if @assignment.team_assignment ACS
+			     if !showed_team -->
             <% if !showed_team %>
 			<td align="center" rowspan="<%= team.users.size %>"><b><%= team.name %></b></td>
 			  <% end %>

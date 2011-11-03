@@ -57,8 +57,9 @@ class ReviewResponseMap < ResponseMap
       reviewer = AssignmentParticipant.find_by_user_id_and_parent_id(user.id,assignment.id)
       if reviewer == nil
         raise ImportError, "The reviewer \"#{row[index]}\" is not a participant in this assignment. <a href='/users/new'>Register</a> this user as a participant?"
-      end           
-      #if assignment.team_assignment chandan
+      end
+      #ACS the reviewee is always a team member
+      #if assignment.team_assignment   ACS
          reviewee = AssignmentTeam.find_by_name_and_parent_id(row[0].to_s.strip, assignment.id)
          if reviewee == nil
            raise ImportError, "The author \"#{row[0].to_s.strip}\" was not found. <a href='/users/new'>Create</a> this user?"                   
@@ -67,6 +68,8 @@ class ReviewResponseMap < ResponseMap
          if existing.nil?
            TeamReviewResponseMap.create(:reviewer_id => reviewer.id, :reviewee_id => reviewee.id, :reviewed_object_id => assignment.id)
          end
+
+      #ACS++
       #else
       #   puser = User.find_by_name(row[0].to_s.strip)
       #   if user == nil
@@ -81,6 +84,7 @@ class ReviewResponseMap < ResponseMap
       #     ParticipantReviewResponseMap.create(:reviewer_id => reviewer.id, :reviewee_id => reviewee.id, :reviewed_object_id => assignment.id)
       #   end
       #end
+      #ACS--
       index += 1
     end 
   end  

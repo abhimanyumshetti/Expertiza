@@ -121,11 +121,15 @@ class Assignment < ActiveRecord::Base
   end
 
   def contributors
-    @contributors ||= teams #team_assignment ? teams : participants chandan
+    #ACS Contributors are just teams
+    #@contributors ||= team_assignment ? teams : participants #ACS
+    @contributors ||= teams #ACS
   end
 
   def review_mappings
-    @review_mappings ||= team_review_mappings #team_assignment ? team_review_mappings : participant_review_mappings chandan
+    #ACS Reviews must be mapped just for teams
+    #@review_mappings ||= team_assignment ? team_review_mappings : participant_review_mappings ACS
+    @review_mappings ||= team_review_mappings #ACS
   end
 
   def assign_metareviewer_dynamically(metareviewer)
@@ -193,11 +197,14 @@ class Assignment < ActiveRecord::Base
   end
 
   def review_mappings
-    #if team_assignment chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if team_assignment ACS
       TeamReviewResponseMap.find_all_by_reviewed_object_id(self.id)
+    #ACS++
     #else
     #  ParticipantReviewResponseMap.find_all_by_reviewed_object_id(self.id)
     #end
+    #ACS--
   end
   
   def metareview_mappings
@@ -228,8 +235,8 @@ class Assignment < ActiveRecord::Base
       } 
       scores[:participants][participant.id.to_s.to_sym][:total_score] = compute_total_score(scores[:participants][participant.id.to_s.to_sym])
     }        
-    
-    #if self.team_assignment chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if self.team_assignment   ACS
       scores[:teams] = Hash.new
       index = 0
       self.teams.each{
@@ -240,7 +247,7 @@ class Assignment < ActiveRecord::Base
         scores[:teams][index.to_s.to_sym][:scores] = Score.compute_scores(assessments, questions[:review])
         index += 1
       }
-    #end
+    #end      ACS
     return scores
   end
   
@@ -259,11 +266,14 @@ class Assignment < ActiveRecord::Base
   end
   
   def get_contributor(contrib_id)
-    #if team_assignment chandan
+    #Always check the TEAM for contributors ACS
+    #if team_assignment ACS
       return AssignmentTeam.find(contrib_id)
+    #ACS++
     #else
     #  return AssignmentParticipant.find(contrib_id)
     #end
+    #ACS--
   end
    
   # parameterized by questionnaire
@@ -396,11 +406,14 @@ class Assignment < ActiveRecord::Base
   
     # Get all review mappings for this assignment & author
     participant = AssignmentParticipant.find(author_id)
-    #if team_assignment chandan
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if team_assignment ACS
       author = participant.team
+    #ACS++
     #else
     #  author = participant
     #end
+    #ACS--
     
     for mapping in author.review_mappings
 
@@ -571,14 +584,17 @@ def add_participant(user_name)
     end
   end  
   
- def assign_reviewers(mapping_strategy)  
-      #if (team_assignment) chandan
+ def assign_reviewers(mapping_strategy)
+      #ACS Always assign reviewers for a team
+      #if (team_assignment) ACS
           #defined in DynamicReviewMapping module
           assign_reviewers_for_team(mapping_strategy)
+      #ACS++
       #else
       #    #defined in DynamicReviewMapping module
       #    assign_individual_reviewer(mapping_strategy)
       #end
+      #ACS--
   end  
 
 #this is for staggered deadline assignments or assignments with signup sheet

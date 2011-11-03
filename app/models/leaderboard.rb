@@ -95,8 +95,8 @@ class Leaderboard < ActiveRecord::Base
         end # end of each.do block
          
         assQuestionnaires[assgt.id] = differentQuestionnaires
-        
-        #if (assgt.team_assignment) chandan
+        #ACS Everything is a team now
+        #if (assgt.team_assignment) ACS
           assTeamHash[assgt.id] = "team"
         #else
         #   assTeamHash[assgt.id] = "indie"

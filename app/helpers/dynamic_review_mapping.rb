@@ -394,11 +394,14 @@ module DynamicReviewMapping
   #and all 3 functions work on more or less the same algo 
 
   def assign_reviewers_automatically(num_reviews, num_review_of_reviews)
-    #chandan if self.team_assignment?
+    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+    #if self.team_assignment?       ACS
       review_message = assign_reviewers_team(num_reviews)
+    #ACS++
     #else
     #  review_message = assign_reviewers_individual(num_reviews)
     #end
+    #ACS--
     metareview_message = assign_metareviewers(num_review_of_reviews, @assignment)
 
     return review_message.to_s + metareview_message.to_s
@@ -947,7 +950,8 @@ module DynamicReviewMapping
       if !participant.nil?
         contributors.each {|contributor|
           map = ResponseMap.find(contributor)
-         #chandan if @assignment.team_assignment?
+         #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+         #if @assignment.team_assignment? ACS
             team_members = TeamsUser.find_all_by_team_id(map.reviewee_id)
             if !team_members.nil?
               team_members.each{|team_member|
@@ -960,28 +964,34 @@ module DynamicReviewMapping
             if map.reviewer_id == participant.id
               temp_contributors.delete(contributor)
             end
+          #ACS++
           #else
             #check whether this user is not a reviewer nor the reviewee for this review
           #  if map.reviewee_id == participant.id || map.reviewer_id == participant.id
           #    temp_contributors.delete(contributor)
           #  end
           #end
+          #ACS--
         }
       end
       topic_user_id = Hash.new
       temp_contributors.each {|contributor|
         map = ResponseMap.find(contributor)
         #participant = Participant.find_all_by_user_id_and_parent_id(map.reviewee_id, @assignment.id)
-        #chandan if @assignment.team_assignment?
+        #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+        #We would have just one member for Indivual assignment.
+        #if @assignment.team_assignment? ACS
           team_members = TeamsUser.find_all_by_team_id(map.reviewee_id)
           if !team_members.nil?
             participant = Participant.find_by_parent_id_and_user_id(@assignment.id, team_members[0].user_id)
             topic_user_id[contributor] = participant.topic_id
           end
+        #ACS++
         #else
         #  participant = Participant.find(map.reviewee_id)
         #  topic_user_id[contributor] = participant.topic_id
         #end
+        #ACS--
       }
 
       #Get topic count.
@@ -1073,8 +1083,8 @@ module DynamicReviewMapping
             participant = Participant.find_by_parent_id_and_user_id(@assignment.id, users[random_index])
 
             map = ResponseMap.find(mapping[0])
-
-            #chandan if @assignment.team_assignment?
+            #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+            #if @assignment.team_assignment?     ACS
               team_members = TeamsUser.find_all_by_team_id(map.reviewee_id)
 
               team_members.each {|team_member|
@@ -1085,11 +1095,13 @@ module DynamicReviewMapping
               if participant.id == map.reviewer_id
                 user_can_review = false
               end
+            #ACS++
             #else
             #  if participant.id == map.reviewer_id || participant.id == map.reviewee_id
             #    user_can_review = false
             #  end
             #end
+            #ACS--
 
            if user_can_review == true && mapping[1].index(users[random_index]).nil?
 

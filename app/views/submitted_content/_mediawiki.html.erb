@@ -5,17 +5,19 @@
     Make a generic review_wiki function, with a parameter specifying wiki type.  The review_wiki function
     then makes callbacks to the various wiki classes, depending on what kind of a wiki it is working on.
     This allows wiki-specific behavior to be kept in the wiki classes. -->
-
-    <!--if participant.instance_of? AssignmentTeam chandan
+    <!--ACS Teams(individual or group) would now be formed hence commenting the below logic-->
+    <!--if participant.instance_of? AssignmentTeam
         team = participant
       else
         team = participant.team
       end %>
     -->
-    <!--%if @assignment.team_assignment chandan and team != nil # The lookup of all team members should be put in a wiki helper-->
+    <!--%if @assignment.team_assignment and team != nil # The lookup of all team members should be put in a wiki helper ACS-->
         <%  for team_member in participant.team.get_participants %>
 	     <%= WikiHelper::review_mediawiki participant.assignment.directory_path, nil, team_member.handle  %>
 	   <%end%>
+    <!--ACS++ -->
     <!--else%>
 	    <!--%= WikiHelper::review_mediawiki participant.assignment.directory_path, nil, participant.handle  %>
     <!--%end%>
+    <!--ACS-- -->

@@ -44,12 +44,14 @@ class StudentTaskController < ApplicationController
             end
           end
           ############
-
-          # chandan if participant.assignment.team_assignment
+          #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+          # if participant.assignment.team_assignment     ACS
             maps = TeamReviewResponseMap.find_all_by_reviewer_id(participant.id)
+          #ACS++
           # else
           #  maps = ParticipantReviewResponseMap.find_all_by_reviewer_id(participant.id)
           # end
+          #ACS--
           rev = !(maps.size == 0)
           for map in maps
             if !map.response
@@ -112,14 +114,16 @@ class StudentTaskController < ApplicationController
     @reviewee_topic_id = nil
     #Even if one of the reviewee's work is ready for review "Other's work" link should be active
     if @assignment.staggered_deadline?
-      #chandan if @assignment.team_assignment
+      #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+      # if @assignment.team_assignment     ACS
         review_mappings = TeamReviewResponseMap.find_all_by_reviewer_id(@participant.id)
       # else
       #  review_mappings = ParticipantReviewResponseMap.find_all_by_reviewer_id(@participant.id)
       #end
 
       review_mappings.each do |review_mapping|
-        #chandan if @assignment.team_assignment
+        #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
+        #if @assignment.team_assignment   ACS
           participant = AssignmentTeam.get_first_member(review_mapping.reviewee_id)
         #else
         #  participant = review_mapping.reviewee
