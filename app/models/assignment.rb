@@ -121,14 +121,12 @@ class Assignment < ActiveRecord::Base
   end
 
   def contributors
-    #ACS Contributors are just teams
-    #@contributors ||= team_assignment ? teams : participants #ACS
+    #ACS Contributors are just teams, so removed check to see if it is a team assignment
     @contributors ||= teams #ACS
   end
 
   def review_mappings
-    #ACS Reviews must be mapped just for teams
-    #@review_mappings ||= team_assignment ? team_review_mappings : participant_review_mappings ACS
+    #ACS Reviews must be mapped just for teams, so removed check to see if it is a team assignment
     @review_mappings ||= team_review_mappings #ACS
   end
 
@@ -197,14 +195,9 @@ class Assignment < ActiveRecord::Base
   end
 
   def review_mappings
-    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
-    #if team_assignment ACS
-      TeamReviewResponseMap.find_all_by_reviewed_object_id(self.id)
-    #ACS++
-    #else
-    #  ParticipantReviewResponseMap.find_all_by_reviewed_object_id(self.id)
-    #end
-    #ACS--
+    #ACS Removed the if condition(and corressponding else) which differentiate assignments as team and individual assignments
+    # to treat all assignments as team assignments
+    TeamReviewResponseMap.find_all_by_reviewed_object_id(self.id)
   end
   
   def metareview_mappings
@@ -235,19 +228,18 @@ class Assignment < ActiveRecord::Base
       } 
       scores[:participants][participant.id.to_s.to_sym][:total_score] = compute_total_score(scores[:participants][participant.id.to_s.to_sym])
     }        
-    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
-    #if self.team_assignment   ACS
-      scores[:teams] = Hash.new
-      index = 0
-      self.teams.each{
-        | team |
-        scores[:teams][index.to_s.to_sym] = Hash.new
-        scores[:teams][index.to_s.to_sym][:team] = team
-        assessments = TeamReviewResponseMap.get_assessments_for(team)
-        scores[:teams][index.to_s.to_sym][:scores] = Score.compute_scores(assessments, questions[:review])
-        index += 1
-      }
-    #end      ACS
+    #ACS Removed the if condition(and corressponding else) which differentiate assignments as team and individual assignments
+    # to treat all assignments as team assignments
+    scores[:teams] = Hash.new
+    index = 0
+    self.teams.each{
+      | team |
+      scores[:teams][index.to_s.to_sym] = Hash.new
+      scores[:teams][index.to_s.to_sym][:team] = team
+      assessments = TeamReviewResponseMap.get_assessments_for(team)
+      scores[:teams][index.to_s.to_sym][:scores] = Score.compute_scores(assessments, questions[:review])
+      index += 1
+    }
     return scores
   end
   
@@ -266,14 +258,8 @@ class Assignment < ActiveRecord::Base
   end
   
   def get_contributor(contrib_id)
-    #Always check the TEAM for contributors ACS
-    #if team_assignment ACS
-      return AssignmentTeam.find(contrib_id)
-    #ACS++
-    #else
-    #  return AssignmentParticipant.find(contrib_id)
-    #end
-    #ACS--
+    #Always need to use the TEAM for contributors, so removed check to see if it is a team assignment ACS
+    return AssignmentTeam.find(contrib_id)
   end
    
   # parameterized by questionnaire
@@ -406,14 +392,9 @@ class Assignment < ActiveRecord::Base
   
     # Get all review mappings for this assignment & author
     participant = AssignmentParticipant.find(author_id)
-    #ACS Remove the if condition(and corressponding else) and treat all assignments as team assignments
-    #if team_assignment ACS
-      author = participant.team
-    #ACS++
-    #else
-    #  author = participant
-    #end
-    #ACS--
+    #ACS Removed the if condition(and corressponding else) which differentiate assignments as team and individual assignments
+    # to treat all assignments as team assignments
+    author = participant.team
     
     for mapping in author.review_mappings
 
@@ -585,17 +566,11 @@ def add_participant(user_name)
   end  
   
  def assign_reviewers(mapping_strategy)
-      #ACS Always assign reviewers for a team
-      #if (team_assignment) ACS
-          #defined in DynamicReviewMapping module
-          assign_reviewers_for_team(mapping_strategy)
-      #ACS++
-      #else
-      #    #defined in DynamicReviewMapping module
-      #    assign_individual_reviewer(mapping_strategy)
-      #end
-      #ACS--
-  end  
+   #ACS Always assign reviewers for a team
+   #removed check to see if it is a team assignment
+   #defined in DynamicReviewMapping module
+   assign_reviewers_for_team(mapping_strategy)
+ end
 
 #this is for staggered deadline assignments or assignments with signup sheet
 def assign_reviewers_staggered(num_reviews,num_review_of_reviews)

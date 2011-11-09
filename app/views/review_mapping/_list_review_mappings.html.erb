@@ -63,7 +63,7 @@
         <%end%>
 
       <td style="vertical-align:top;"><%= contributor.name %><br/>
-        <!-- % !assignment.team_assignment % ACS-->
+        <!--removed code that handles team and individual assignments differently-->
         <% if assignment.team_count < 2 %>
            (<%= contributor.fullname %>)
         <%else%>
@@ -74,7 +74,7 @@
         <% end %>
 
           <div style="text-align:right">
-          <% #ACS if !assignment.team_assignment %>
+          <!-- ACS removed check to see if it is a team assignment-->
           <% if assignment.team_count < 2 %>
             <%= link_to 'delete', :action => 'delete_participant', :id => contributor.id %><br/>
           <% end %>

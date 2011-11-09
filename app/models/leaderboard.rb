@@ -96,11 +96,8 @@ class Leaderboard < ActiveRecord::Base
          
         assQuestionnaires[assgt.id] = differentQuestionnaires
         #ACS Everything is a team now
-        #if (assgt.team_assignment) ACS
-          assTeamHash[assgt.id] = "team"
-        #else
-        #   assTeamHash[assgt.id] = "indie"
-        #end
+        #removed check to see if it is a team assignment
+        assTeamHash[assgt.id] = "team"
     end
     # end of first for
     

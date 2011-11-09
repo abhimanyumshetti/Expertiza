@@ -77,11 +77,12 @@ class AssignmentController < ApplicationController
     ## feedback added
     ##
 
-    ## Added by Chandan, Sanjay & Abhimanyu to handle all assignments as team assignments
+    # ACS added code to handle all assignments as team assignments. we set team count to 1 if
+    # the team assignment option was selected as NO while adding a new assignment
+    # and further use this variable to check what type of assignment we are dealing with
     if params[:team_assignment] == false
       @assignment.team_count = 1
     end
-    ##################################
 
     if params[:days].nil? && params[:weeks].nil?
       @days = 0
@@ -313,20 +314,14 @@ class AssignmentController < ApplicationController
 
     # The update call below updates only the assignment table. The due dates must be updated separately.
     if @assignment.update_attributes(params[:assignment])
-      puts "xxxxxxxxxx"
-      puts @assignment.team_assignment
-      puts @assignment.team_count
-      puts "yyyyyyyyyy"
-      ## Added by Chandan, Sanjay & Abhimanyu to handle all assignments as team assignments
+      # ACS added code to handle all assignments as team assignments. we set team count to 1 if
+      # the team assignment option was selected as NO while editing an existing assignment
+      # and further use this variable to check what type of assignment we are dealing with
       if @assignment.team_assignment == false
           @assignment.team_count = 1
           @assignment.save
       end
-      puts "xxxxxxxxxx"
-      puts @assignment.team_assignment
-      puts @assignment.team_count
-      puts "yyyyyyyyyy"
-      ##################################
+
       if params[:questionnaires] and params[:limits] and params[:weights]
         set_questionnaires
         set_limits_and_weights

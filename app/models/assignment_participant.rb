@@ -136,11 +136,8 @@ class AssignmentParticipant < Participant
   
   def get_reviews
     #ACS Always get assessments for a team
-    #if self.assignment.team_assignment ACS
-      return TeamReviewResponseMap.get_assessments_for(self.team)          
-    #else
-    #  return ParticipantReviewResponseMap.get_assessments_for(self)
-    #end
+    #removed check to see if it is a team assignment
+    return TeamReviewResponseMap.get_assessments_for(self.team)
   end
    
   def get_metareviews
@@ -175,7 +172,6 @@ class AssignmentParticipant < Participant
   def get_wiki_submissions
     currenttime = Time.now.month.to_s + "/" + Time.now.day.to_s + "/" + Time.now.year.to_s
     #ACS Check if the team count is greater than one(team assignment)
-    #if self.assignment.team_assignment and self.assignment.wiki_type.name == "MediaWiki" ACS
     if self.assignment.team_count > 1 and self.assignment.wiki_type.name == "MediaWiki"
        submissions = Array.new
        if self.team
@@ -356,16 +352,15 @@ class AssignmentParticipant < Participant
         dirnum = 0
       end
       self.update_attribute('directory_num',dirnum)
-      #ACS Get participants in either case
-      #if self.assignment.team_assignment ACS
-        self.team.get_participants.each{
-            | member |
-            if member.directory_num == nil or member.directory_num < 0
-              member.directory_num = self.directory_num
-              member.save
-            end
-        }
-      #end
+      #ACS Get participants irrespective of the number of participants in the team
+      #removed check to see if it is a team assignment
+      self.team.get_participants.each{
+          | member |
+          if member.directory_num == nil or member.directory_num < 0
+            member.directory_num = self.directory_num
+            member.save
+          end
+      }
     end
   end   
 

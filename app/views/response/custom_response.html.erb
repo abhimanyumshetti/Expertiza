@@ -11,12 +11,9 @@
 
 <% if !@map.contributor.nil?%>
   <!--ACS Find topic id for the team-->
-  <!--% if @map.assignment.team_assignment? % ACS -->
-        <%team_member = TeamsUser.find_by_team_id(@map.contributor).user_id
-        topic_id = Participant.find_by_parent_id_and_user_id(@map.assignment.id,team_member).topic_id %>
-  <!--else%-->
-        <!--% topic_id = Participant.find(@map.contributor).topic_id%-->
-  <!--%end%-->
+  <!--removed code that handles team and individual assignments differently-->
+  <%team_member = TeamsUser.find_by_team_id(@map.contributor).user_id
+  topic_id = Participant.find_by_parent_id_and_user_id(@map.assignment.id,team_member).topic_id %>
 
   <%if !topic_id.nil?%>
     <h2>You are reviewing <%=SignUpTopic.find(topic_id).topic_name%></h2>

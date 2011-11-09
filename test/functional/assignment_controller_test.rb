@@ -48,6 +48,7 @@ class AssignmentControllerTest < ActionController::TestCase
       :author_feedback_questionnaire_id  => questionnaire_id,
       :instructor_id => instructorid,
       :course_id => courseid
+      :team_assignment => "No"
     )
     #p flash[:notice].to_s
     assert assignment.save
